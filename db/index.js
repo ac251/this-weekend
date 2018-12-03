@@ -3,7 +3,7 @@ const { Pool } = require('pg');
 const pool = new Pool();
 
 module.exports.checkRoomAuth = (uuid, roomId) => {
-  const queryStr = 'SELECT users_rooms.joined, users.id FROM users INNER JOIN users_rooms ON users.id = users_rooms.userid WHERE users.uuid = $1 AND users_rooms.room = $2';
+  const queryStr = 'SELECT users_rooms.joined, users.id FROM users INNER JOIN users_rooms ON users.id = users_rooms.userid WHERE users.uuid = $1 AND users_rooms.roomid = $2';
   
   return pool.query(queryStr, [uuid, roomId])
     .then(({ rows }) => {
@@ -15,21 +15,21 @@ module.exports.checkRoomAuth = (uuid, roomId) => {
 };
 
 module.exports.getAllMessages = (roomId) => {
-  const queryStr = 'messages.body, messages.room, messages.posted, users.name AS user FROM messages INNER JOIN users ON messages.user = users.id WHERE messages.room = $1';
+  const queryStr = 'SELECT messages.body, messages.roomid, messages.posted, users.name AS user FROM messages INNER JOIN users ON messages.userid = users.id WHERE messages.roomid = $1 ORDER BY posted ASC';
   
   return pool.query(queryStr, [roomId])
     .then(({ rows }) => rows);
 };
 
 module.exports.getNewMessages = (roomId, start) => {
-  const queryStr = 'SELECT messages.body, messages.room, messages.posted, users.name AS user FROM messages INNER JOIN users ON messages.userid = users.id WHERE messages.room = $1 AND messages.posted > $2';
+  const queryStr = 'SELECT messages.body, messages.roomid, messages.posted, users.name AS user FROM messages INNER JOIN users ON messages.userid = users.id WHERE messages.roomid = $1 AND messages.posted > $2  ORDER BY posted ASC';
   
   return pool.query(queryStr, [roomId, start])
     .then(({ rows }) => rows);
 };
 
 module.exports.getRooms = (uuid) => {
-  const queryStr = 'SELECT rooms.* FROM users INNER JOIN users_rooms ON users.id = users_rooms.userid INNER JOIN rooms ON users_rooms.room = rooms.id';
+  const queryStr = 'SELECT rooms.* FROM users INNER JOIN users_rooms ON users.id = users_rooms.userid INNER JOIN rooms ON users_rooms.roomid = rooms.id';
   
   return pool.query(queryStr, [uuid])
     .then(({ rows }) => rows);
@@ -67,6 +67,6 @@ module.exports.findUser = (userName) => {
 
 module.exports.postMessage = (message) => {
   const { user, room, body } = message;
-  const queryStr = 'INSERT INTO messages (user, room, body) VALUES ($1, $2, $3)';
+  const queryStr = 'INSERT INTO messages (userid, roomid, body) VALUES ($1, $2, $3)';
   return pool.query(queryStr, [user, room, body])
 }

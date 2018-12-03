@@ -5,6 +5,12 @@ CREATE TABLE users (
   joined TIMESTAMPTZ DEFAULT current_timestamp
 );
 
+CREATE TABLE rooms (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(30) NOT NULL,
+  created TIMESTAMPTZ DEFAULT current_timestamp
+);
+
 CREATE TABLE messages (
   id SERIAL PRIMARY KEY,
   userid INTEGER NOT NULL REFERENCES users(id),
@@ -13,15 +19,9 @@ CREATE TABLE messages (
   posted TIMESTAMPTZ DEFAULT current_timestamp
 );
 
-CREATE TABLE rooms (
-  id SERIAL PRIMARY KEY,
-  name VARCHAR(30) NOT NULL,
-  created TIMESTAMPTZ DEFAULT current_timestamp
-);
-
 CREATE TABLE users_rooms (
   userid INTEGER NOT NULL REFERENCES users(id),
-  room INTEGER NOT NULL REFERENCES rooms(id),
+  roomid INTEGER NOT NULL REFERENCES rooms(id),
   joined TIMESTAMPTZ DEFAULT current_timestamp
 );
 

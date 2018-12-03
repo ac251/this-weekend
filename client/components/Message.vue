@@ -9,7 +9,7 @@
       {{ message.body }}
     </div>
     <div class="timestamp">
-      {{ message.timestamp }}
+      {{ message.posted }}
     </div>
   </div> 
 </template>
