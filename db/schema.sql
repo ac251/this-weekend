@@ -7,8 +7,8 @@ CREATE TABLE users (
 
 CREATE TABLE messages (
   id SERIAL PRIMARY KEY,
-  user INTEGER NOT NULL REFERENCES users(id),
-  room INTEGER NOT NULL REFERENCES rooms(id),
+  userid INTEGER NOT NULL REFERENCES users(id),
+  roomid INTEGER NOT NULL REFERENCES rooms(id),
   body TEXT NOT NULL,
   posted TIMESTAMPTZ DEFAULT current_timestamp
 );
@@ -20,11 +20,12 @@ CREATE TABLE rooms (
 );
 
 CREATE TABLE users_rooms (
-  user INTEGER NOT NULL REFERENCES users(id),
-  room INTEGER NOT NULL REFERENCES rooms(id)
+  userid INTEGER NOT NULL REFERENCES users(id),
+  room INTEGER NOT NULL REFERENCES rooms(id),
+  joined TIMESTAMPTZ DEFAULT current_timestamp
 );
 
 CREATE INDEX uuid_idx ON users(uuid);
 CREATE INDEX username_idx ON users(name);
 CREATE INDEX roomname_idx ON rooms(name);
-CREATE INDEX user_rooms_idx ON users_rooms(user); 
+CREATE INDEX user_rooms_idx ON users_rooms(userid); 
