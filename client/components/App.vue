@@ -1,11 +1,13 @@
 <template>
   <div>
-    <Message
-      v-for="(message, index) in messages"
-      :key="index"
-      :message="message"
-      @like="test"
-    />
+    <main>
+      <Message
+        v-for="(message, index) in messages"
+        :key="index"
+        :message="message"
+        @like="test"
+      />
+    </main>
   </div>
 </template>
 <script>
@@ -28,7 +30,5 @@
       }
     }
 
-  }
-
-  
+  }  
 </script>

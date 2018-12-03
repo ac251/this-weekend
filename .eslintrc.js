@@ -3,10 +3,12 @@ module.exports = {
     'eslint:recommended',
     'plugin:vue/essential'
   ],
-  rules: {},
+  rules: {
+    'no-console': 'warn',
+  },
   env: {
     browser: true,
     node: true,
-  }
+  },
 };
 
