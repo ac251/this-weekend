@@ -1,4 +1,6 @@
-module.exports = {
+import queryString from 'query-string';
+
+export default {
   createUser(name) {
     return fetch('/users', {
       method: 'POST',
@@ -30,7 +32,7 @@ module.exports = {
       })
   },
 
-  getAllMessages(room) {
+  getMessages(room) {
     return fetch(`/messages/${room}`)
       .then(res => {
         if (res.status !== 200) {
@@ -40,4 +42,9 @@ module.exports = {
       });
   },
 
-}
+  getNewMessages(room, startTime) {
+    return fetch(`/messages/${room}?${queryString.stringify({ startTime })}`)
+
+  } 
+
+};

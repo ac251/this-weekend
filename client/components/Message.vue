@@ -9,12 +9,13 @@
       {{ message.body }}
     </div>
     <div class="timestamp">
-      {{ message.posted }}
+      {{ timestamp }}
     </div>
   </div> 
 </template>
 
 <script>
+  import Moment from 'moment';
   export default {
     name: 'Message',
     props: ['message'],
@@ -22,6 +23,11 @@
       return {
         liked: false,
       };
+    },
+    computed: {
+      timestamp() {
+        return Moment(this.message.posted).fromNow();
+      }
     },
     methods: {
       like() {
