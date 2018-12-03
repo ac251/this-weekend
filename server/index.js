@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/', (req, res, next) => {next()}); //check session
+app.use('/', (req, res, next) => {next();}); //check session
 
 app.use('/', express.static(path.join(__dirname, '..', 'public/')));
 
@@ -25,18 +25,24 @@ app.get('/rooms', (req, res) => {
 
 app.get('/messages/:room', (req, res) => {
   const { room } = req.params;
-  db.getAllMessages(room)
-    .then(messages => {console.log(messages); res.status(200).json(messages);})
+  const { startTime } = req.query;
+  if (startTime) {
+    db.getAllMessages(room)
+    .then(messages => res.status(200).json(messages))
     .catch(err => {
       console.log(err);
       res.sendStatus(500);
-    })
+    });
+  } else {
+    db.getNewMessages(room, startTime)
+    .then(messages => res.status(200).json(messages))
+    .catch(err => {
+      console.log(err);
+      res.sendStatus(500);
+    });
+  }
 })
-
-app.get('/messages/:room/updates', (req, res) => {
-  // get messages since last request
-});
-
+;
 app.post('/users', (req, res) => {
   // create user
 });
@@ -45,11 +51,11 @@ app.post('/messages', (req, res) => {
   db.postMessage(req.body)
     .then(() => res.sendStatus(201))
     .catch(err => console.log(err)); 
-})
+});
 
 app.post('/invites', (req, res) => {
   // add invited user to room
-})
+});
 
 app.post('/rooms', (req, res) => {
   // create room
