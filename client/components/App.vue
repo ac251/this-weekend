@@ -22,6 +22,10 @@
         @like="test"
       />
     </main>
+    <form>
+      <textarea v-model="messageText"></textarea>
+      <button @click.prevent="test">send</button>
+    </form>
   </div>
 </template>
 <script>
@@ -34,11 +38,11 @@
       return {
         messages, //update when no longer using sample data
         user: '',
-        choosingRoom: false,
+        choosingRoom: true,
         inviting: false,
         rooms: [{id: 1, name: 'test'}], //get rid of this sample stuff
-        currentRoom: 'the best room', // this too
-
+        currentRoom: {id: 1, name: 'the best room'}, // this too
+        messageText: '',
       }
     },
     created() {
@@ -46,11 +50,14 @@
     },
     methods: {
       test(id) {
-        console.log('ID IS', id);
+        console.log(this.messageText);
       },
       changeRoom(roomId) {
         // call api, get messages
-      } 
+      },
+      sendMessage() {
+        // call api, send
+      },
     }
 
   }  

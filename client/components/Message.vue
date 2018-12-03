@@ -11,7 +11,6 @@
     <div class="timestamp">
       {{ message.timestamp }}
     </div>
-    <button @click="like">like</button>
   </div> 
 </template>
 

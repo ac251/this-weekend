@@ -10,7 +10,7 @@
       invite people
     </button>
     <button @click="$emit('back')">
-      back to {{currentRoom}}
+      back to {{currentRoom.name}}
     </button>
   </header>
 </template>

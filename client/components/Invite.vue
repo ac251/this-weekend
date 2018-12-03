@@ -2,7 +2,7 @@
   <header>
     <h1>invite people to {{room}}</h1>
     <form>
-      <input type="text" />
+      <input type="text" v-model="input"/>
       <button>
         send invite
       </button>
@@ -12,13 +12,18 @@
     >
       {{success ? 'invite sent' : 'we couldn\'t find anyone by that name'}}
     </div>
+    <button @click="$emit(done)">
+      done
+    </button>
   </header>
 </template>
+
 <script>
   module.exports = {
     props: ['room'],
     data() {
       return {
+        input: '',
         sent: false,
       }
     },
