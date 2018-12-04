@@ -1,45 +1,47 @@
 <template>
   <div>
+    <CreateFirstRoom
+      v-if="!currentRoomSelected"
+      @create-room="createRoom"
+    />
+    <RoomsList
+      v-else-if="choosingRoom"
+      @changeRoom="changeRoom"
+      :rooms = "rooms"
+      :currentRoom = "currentRoom"
+      @back="choosingRoom = false"
+      @create-room="createRoom"
+    />
+    <Invite
+      v-else-if="inviting"
+      :room="currentRoom"
+      @done="inviting = false"
+    />
+    <header v-else>
+      <button @click="choosingRoom = true">
+        change rooms
+      </button>
+      <button @click="inviting = true">
+        invite people to room
+      </button>
+    </header>
     <main>
-      <CreateFirstRoom
-        v-if="!currentRoomSelected"
-        @create-room="createRoom"
-      />
-      <RoomsList
-        v-else-if="choosingRoom"
-        @changeRoom="changeRoom"
-        :rooms = "rooms"
-        :currentRoom = "currentRoom"
-        @back="choosingRoom = false"
-        @create-room="createRoom"
-      />
-      <Invite
-        v-else-if="inviting"
-        :room="currentRoom"
-        @done="inviting = false"
-      />
-      <header v-else>
-        <button @click="choosingRoom = true">
-          change rooms
-        </button>
-        <button @click="inviting = true">
-          invite people to room
-        </button>
-      </header>
       <Message
         v-for="message in messages"
         :key="message.id"
         :message="message"
       />
     </main>
-    <form>
-      <textarea
-      v-model="messageText"
-      @keyup.enter="sendMessage"
-      >
-      </textarea>
-      <button @click.prevent="sendMessage">send</button>
-    </form>
+    <footer>
+      <form>
+        <textarea
+        v-model="messageText"
+        @keyup.enter="sendMessage"
+        >
+        </textarea>
+        <button @click.prevent="sendMessage">send</button>
+      </form>
+    </footer>
   </div>
 </template>
 <script>
@@ -68,14 +70,10 @@
     created() {
       requests.getInitialMessages()
         .then(({messages, rooms, initialRoomIdx}) => {
-          console.log(initialRoomIdx);
           this.messages = messages;
           this.rooms = rooms;
-          console.log(this.rooms);
           if (initialRoomIdx !== undefined) {
-            console.log('INITIAL INDEX', initialRoomIdx);
             this.currentRoom = this.rooms[initialRoomIdx];
-            console.log(this.currentRoom)
             this.currentRoomSelected = true;
           }
         })
@@ -83,7 +81,15 @@
     },
 
     mounted() {
-      this.interval = setInterval(() => this.getNewMessages(), 2000);
+      if (this.currentRoomSelected) {
+        this.interval = setInterval(() => this.getNewMessages(), 2000);
+      } else {
+        this.interval = setInterval(() => this.getRooms(() => {
+          if (this.rooms.length > 0) {
+            this.changeRoom(this.rooms[0].id);
+          }
+        }), 2000);
+      }
     },
       
 
@@ -99,8 +105,8 @@
         requests.getAllMessages(this.currentRoom.id)
           .then(messages => {
             this.messages = messages;
-            this.interval = setInterval(() => this.getNewMessages(), 2000)
-
+            this.interval = setInterval(() => this.getNewMessages(), 2000);
+            this.currentRoomSelected = true;
           })
           .catch(err => console.log('ERROR', err));    
       },
@@ -147,6 +153,7 @@
       },
 
       createRoom(roomName) {
+        console.log('your new room is', roomName);
         requests.createNewRoom(roomName)
           .then(({ roomid }) => {
             console.log(roomid);
@@ -162,9 +169,9 @@
             cb();
           })
           .catch(err => console.log('ERROR', err));
-      }
-    }
+      },
 
+    },
   };
 
 </script>
