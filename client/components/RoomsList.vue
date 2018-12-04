@@ -32,7 +32,7 @@
     },
     computed: {
       displayRooms() {
-        return this.rooms.filter((room) => room !== this.currentRoom);
+        return this.rooms.filter((room) => room.id !== this.currentRoom.id);
       }
     },
     methods: {

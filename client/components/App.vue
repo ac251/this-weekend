@@ -22,7 +22,9 @@
         in room {{currentRoom.name}}
       </div>
       <div class="button-row">
-        <button @click="choosingRoom = true">
+        <button 
+          @click="choosingRoom = true"
+        >
           change rooms
         </button>
         <button @click="inviting = true">
@@ -119,6 +121,7 @@
             this.currentRoomSelected = true;
             clearInterval(this.interval);
             this.interval = setInterval(() => this.getNewMessages(), 2000);
+            setInterval(() => this.getRooms(), 5000);
           }
         })
         .catch(err => console.log('ERROR', err));
