@@ -1,5 +1,6 @@
 import queryString from 'query-string';
-import axios from 'axios';
+
+handle500 = () => throw new Error('sorry, something went wrong')
 
 export default {
   createUser(name) {
@@ -13,7 +14,7 @@ export default {
           throw new Error('this username is already taken');
         }
         if (res.status === 500) {
-          throw new Error('sorry, something went wrong');
+          handle500();
         }
         return res.json();
       });
@@ -37,7 +38,17 @@ export default {
     return fetch(`/messages/${room}`)
       .then(res => {
         if (res.status === 500) {
-          throw new Error('sorry, something went wrong');
+          handle500();
+        }
+        return res.json();
+      });
+  },
+
+  getInitialMessages() {
+    return fetch('/messages')
+      .then(res => {
+        if (res.status === 500) {
+          handle500();
         }
         return res.json();
       });
@@ -59,10 +70,27 @@ export default {
           throw new Error('sorry, that username isn\'t available');
         }
         if (res.status === 500) {
-          throw new Error('sorry, something went wrong');
+          handle500();
         }
         return;
       });
   },
+
+  inviteUserToRoom(username, roomid) {
+    return fetch('/invites', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username, roomid }),
+    })
+      .then(res => {
+        if (res.status === 404) {
+          throw new Error('no user');
+        }
+        if (res.status === 500) {
+          handle500();
+        }
+        return;
+      })
+  }
 
 };
