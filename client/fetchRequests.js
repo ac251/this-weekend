@@ -11,11 +11,11 @@ export default {
         if (res.status === 409) {
           throw new Error('this username is already taken');
         }
-        if (res.status !== 201) {
+        if (res.status === 500) {
           throw new Error('sorry, something went wrong');
         }
         return res.json();
-      })
+      });
   },
 
   sendMessage(message) {
@@ -29,13 +29,13 @@ export default {
           throw new Error(res.body);
         }
         return res.json();
-      })
+      });
   },
 
-  getMessages(room) {
+  getAllMessages(room) {
     return fetch(`/messages/${room}`)
       .then(res => {
-        if (res.status !== 200) {
+        if (res.status === 500) {
           throw new Error('sorry, something went wrong');
         }
         return res.json();
@@ -43,8 +43,26 @@ export default {
   },
 
   getNewMessages(room, startTime) {
-    return fetch(`/messages/${room}?${queryString.stringify({ startTime })}`)
+    return fetch(`/messages/${room}?${queryString.stringify({ startTime })}`);
 
-  } 
+  },
+
+  createNewUser() {
+    const { username } = this;
+    fetch('/users', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ username }),
+    })
+      .then(res => {
+        if (res.status === 409) {
+          throw new Error('sorry, that username isn\'t available');
+        }
+        if (res.status === 201) {
+          throw new Error('sorry, something went wrong');
+        }
+        return;
+      });
+  }
 
 };
