@@ -60,27 +60,69 @@ app.get('/', (req, res) => {
 });
 
 app.get('/messages', (req, res) => {
-  // get last room from cookie
-  // call db for messages
+  const { uuid, lastroom } = req.cookies;
+  db.getRooms(uuid)
+    .then(rooms => {
+      let initialRoomIdx;
+      if (!lastroom && this.rooms.length !== 0) {
+        initialRoomIdx = 0;
+      }
+      if (!lastroom || rooms.length === 0) {
+        return res.status(200).json({
+          messages: [],
+          rooms,
+          initialRoomIdx,
+        });
+      }
+      rooms.forEach((room, idx) => {
+        console.log('typeof', typeof lastroom);
+        if (room.id === parseInt(lastroom)) {
+          initialRoomIdx = idx;
+        }
+      });
+      console.log('ROOMS', rooms);
+      console.log('initialRoomIdx', initialRoomIdx);
+      return db.getAllMessages(lastroom || rooms[0].id)
+        .then(messages => {
+          const body = {
+            messages,
+            rooms,
+            initialRoomIdx,
+          };
+          res.status(200).json(body);
+        });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err);
+    });
 });
 
 app.get('/rooms', (req, res) => {
-  // get rooms user belongs to
+  const { uuid } = req.cookies;
+  db.getRooms(uuid)
+    .then(rooms => res.status(200).send(rooms))
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err);
+    });
 });
 
 app.get('/messages/:room', (req, res) => {
   const { room } = req.params;
+  console.log('ROOM', room);
   const { startTime } = req.query;
+  console.log('TIIIMESTAMP', startTime)
   if (!startTime) {
     db.getAllMessages(room)
-    .then(messages => res.cookie('lastroom', room).status(200).json(messages))
-    .catch(err => {
-      console.log(err);
-      res.sendStatus(500);
-    });
+      .then(messages => {console.log('messagesnostarttime', messages); res.cookie('lastroom', room).status(200).json(messages)})
+      .catch(err => {
+        console.log(err);
+        res.sendStatus(500);
+      });
   } else {
     db.getNewMessages(room, startTime)
-    .then(messages => res.cookie('lastroom', room).status(200).json(messages))
+    .then(messages => {console.log('messages', messages); res.cookie('lastroom', room).status(200).json(messages)})
     .catch(err => {
       console.log(err);
       res.sendStatus(500);
@@ -112,7 +154,16 @@ app.post('/invites', (req, res) => {
 });
 
 app.post('/rooms', (req, res) => {
-  // create room
+  const { roomName } = req.body;
+  const { uuid } = req.cookies;
+  db.createRoom(uuid, roomName)
+    .then(roomid => {
+      res.status(201).json({ roomid });
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).send(err);
+    });
 });
 
 app.listen(3000, () => console.log('listening on port 3000'));

@@ -15,40 +15,43 @@ module.exports.checkRoomAuth = (uuid, roomId) => {
 };
 
 module.exports.getAllMessages = (roomId) => {
-  const queryStr = 'SELECT messages.body, messages.roomid, messages.posted, users.name AS user FROM messages INNER JOIN users ON messages.userid = users.id WHERE messages.roomid = $1 ORDER BY posted ASC';
+  const queryStr = 'SELECT messages.*, users.name AS user FROM messages INNER JOIN users ON messages.userid = users.id WHERE messages.roomid = $1 ORDER BY posted ASC';
   
   return pool.query(queryStr, [roomId])
     .then(({ rows }) => rows);
 };
 
 module.exports.getNewMessages = (roomId, start) => {
-  const queryStr = 'SELECT messages.body, messages.roomid, messages.posted, users.name AS user FROM messages INNER JOIN users ON messages.userid = users.id WHERE messages.roomid = $1 AND messages.posted > $2  ORDER BY posted ASC';
+  const queryStr = 'SELECT messages.*, users.name AS user FROM messages INNER JOIN users ON messages.userid = users.id WHERE messages.roomid = $1 AND messages.posted > $2 ORDER BY posted ASC';
   
   return pool.query(queryStr, [roomId, start])
     .then(({ rows }) => rows);
 };
 
 module.exports.getRooms = (uuid) => {
-  const queryStr = 'SELECT rooms.* FROM users INNER JOIN users_rooms ON users.id = users_rooms.userid INNER JOIN rooms ON users_rooms.roomid = rooms.id';
+  const queryStr = 'SELECT rooms.id, rooms.name FROM users INNER JOIN users_rooms ON users.id = users_rooms.userid INNER JOIN rooms ON users_rooms.roomid = rooms.id WHERE users.uuid = $1';
   
   return pool.query(queryStr, [uuid])
     .then(({ rows }) => rows);
 };
 
 module.exports.createRoom = (uuid, roomName) => {
-  const findUser = 'SELECT id as user FROM users WHERE uuid = $1';
-  const createRoom = 'INSERT INTO rooms (name) VALUES ($1) RETURNING id as room';
-  const linkUserToRoom = 'INSERT INTO users_rooms (user, room) VALUES ($1, $2)';
+  const findUser = 'SELECT id FROM users WHERE uuid = $1';
+  const createRoom = 'INSERT INTO rooms (name) VALUES ($1) RETURNING id as roomid';
+  const linkUserToRoom = 'INSERT INTO users_rooms (userid, roomid) VALUES ($1, $2)';
   
   return pool.query(findUser, [uuid])
     .then(({ rows }) => {
+      if (rows.length === 0) {
+        throw new Error('user not found');
+      }
       const { id } = rows[0];
       return pool.query(createRoom, [roomName])
         .then(({ rows }) => {
-          const { room } = rows[0];
-          return room;
-        })
-        .then(room => pool.query(linkUserToRoom, [id, room]));
+          const { roomid } = rows[0];
+          return pool.query(linkUserToRoom, [id, roomid])
+            .then(() => roomid);
+        });
     });
 };
 
@@ -71,7 +74,7 @@ module.exports.findUser = (userName) => {
 };
 
 module.exports.postMessage = (message) => {
-  const { user, room, body } = message;
+  const { userid, roomid, body } = message;
   const queryStr = 'INSERT INTO messages (userid, roomid, body) VALUES ($1, $2, $3)';
-  return pool.query(queryStr, [user, room, body]);
+  return pool.query(queryStr, [userid, roomid, body]);
 };

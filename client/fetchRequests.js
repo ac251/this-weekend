@@ -1,6 +1,6 @@
 import queryString from 'query-string';
 
-handle500 = () => throw new Error('sorry, something went wrong')
+const handle500 = () => { throw new Error('sorry, something went wrong'); };
 
 export default {
   createUser(name) {
@@ -54,12 +54,17 @@ export default {
       });
   },
 
-  getNewMessages(room, startTime) {
-    return fetch(`/messages/${room}?${queryString.stringify({ startTime })}`);
+  getNewMessages(room, startTime = (new Date(0)).toISOString()) {
+    return fetch(`/messages/${room}?${queryString.stringify({ startTime })}`)
+      .then(res => {
+        if (res.status === 500) {
+          handle500();
+        }
+        return res.json();
+      });
   },
 
   createNewUser(username) {
-    console.log('fetching');
     return fetch('/users', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -73,6 +78,20 @@ export default {
           handle500();
         }
         return;
+      });
+  },
+
+  createNewRoom(roomName) {
+    return fetch('/rooms', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ roomName }),
+    })
+      .then(res => {
+        if (res.status === 500) {
+          handle500();
+        }
+        return res.json();
       });
   },
 
@@ -90,7 +109,17 @@ export default {
           handle500();
         }
         return;
-      })
+      });
+  },
+
+  getRooms() {
+    return fetch('/rooms')
+      .then(res => {
+        if (res.status === 500) {
+          handle500();
+        }
+        return res.json();
+      });
   }
 
 };

@@ -1,6 +1,5 @@
 <template>
   <div class="message"
-    :class="{ liked }"
   >
     <div class="user">
       {{ message.user }}
