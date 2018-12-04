@@ -2,10 +2,13 @@ const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 module.exports = {
-  entry: './client/app.js',
+  entry: {
+    app: './client/app.js',
+    login: './client/login/login.js'
+  },
   output: {
     path: path.join(__dirname, 'public'),
-    filename: 'bundle.js'
+    filename: '[name].bundle.js'
   },
   module: {
     rules: [
@@ -18,4 +21,4 @@ module.exports = {
   plugins: [
     new VueLoaderPlugin(),
   ]
-}
+};
