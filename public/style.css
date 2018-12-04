@@ -23,6 +23,12 @@ main {
 
 body {
   background-color: darkgray;
+
+  font-family: 'Roboto Mono';
+}
+
+form {
+  display: flex;
 }
 
 footer {
@@ -108,4 +114,12 @@ textarea {
 
 .message div {
   padding: 15px;
+}
+
+.intro {
+  padding-top: 30px;
+}
+
+.pickusermessage {
+  color: red;
 }

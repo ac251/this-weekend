@@ -1,8 +1,8 @@
 <template>
   <div>
-    <h1>
-      what do you want to be called this weekend?
-    </h1>
+    <h3>
+      pick a name
+    </h3>
     <form>
       <input
         type="text"
@@ -11,10 +11,13 @@
       <button @click.prevent="submit">
         join the weekend
       </button>
-      <div v-if="error">
-        {{message}};        
+      <div v-if="error" class="pickusermessage">
+        {{message}}        
       </div>
     </form>
+    <div class="intro">
+      don't be too picky. your name only lasts 72 hours
+    </div>
   </div>
 </template>
 
