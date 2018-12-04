@@ -95,7 +95,20 @@ app.post('/messages', (req, res) => {
 });
 
 app.post('/invites', (req, res) => {
-  // add invited user to room
+  const { username, roomid } = req.body;
+  db.findUser(username)
+    .then(rows => {
+      if (rows.length === 0) {
+        throw new Error('no user');
+      }
+      const { id } = rows[0];
+      return db.addUserToRoom(id, roomid);
+    })
+    .then(() => res.sendStatus(201))
+    .catch(err => {
+      const status = err.message === 'no user' ? 404 : 500;
+      res.status(status).send(err);
+    });
 });
 
 app.post('/rooms', (req, res) => {

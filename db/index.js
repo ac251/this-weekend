@@ -11,7 +11,7 @@ module.exports.checkRoomAuth = (uuid, roomId) => {
         throw new Error('unauthorized');
       }
       return;
-    })
+    });
 };
 
 module.exports.getAllMessages = (roomId) => {
@@ -50,23 +50,28 @@ module.exports.createRoom = (uuid, roomName) => {
         })
         .then(room => pool.query(linkUserToRoom, [id, room]));
     });
-}
+};
 
 module.exports.createUser = (userName, uuid) => {
   const queryStr = 'INSERT INTO users (name, uuid) VALUES ($1, $2)';
   
   return pool.query(queryStr, [userName, uuid]); 
-}
+};
+
+module.exports.addUserToRoom = (userid, roomid) => {
+  const queryStr = 'INSERT INTO users_rooms (userid, roomid) VALUES ($1, $2)';
+  return pool.query(queryStr, [userid, roomid]);
+};
 
 module.exports.findUser = (userName) => {
   const queryStr = 'SELECT * FROM users WHERE name = $1';
 
   return pool.query(queryStr, [userName])
     .then(({ rows }) => rows);
-}
+};
 
 module.exports.postMessage = (message) => {
   const { user, room, body } = message;
   const queryStr = 'INSERT INTO messages (userid, roomid, body) VALUES ($1, $2, $3)';
-  return pool.query(queryStr, [user, room, body])
-}
+  return pool.query(queryStr, [user, room, body]);
+};
