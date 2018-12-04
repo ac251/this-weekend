@@ -3,7 +3,7 @@
     <h1>invite people to {{room}}</h1>
     <form>
       <input type="text" v-model="input"/>
-      <button>
+      <button @click="submit">
         send invite
       </button>
     </form>
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+  import requests from '../fetchRequests.js';
   export default {
     name: 'Invite',
     props: ['room'],
@@ -26,11 +27,20 @@
       return {
         input: '',
         sent: false,
-      }
+        success: false
+      };
     },
     submit() {
-      // submit user
+      requests.inviteUserToRoom(this.input, this.room.id)
+        .then(() => {
+          this.sent = true;
+          this.success = true;
+        })
+        .catch(() => {
+          this.sent = true;
+          this.success = false;
+        });
     }
-  }
+  };
   
 </script>
