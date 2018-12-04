@@ -34,6 +34,7 @@
   import messages from './sampleData.js';
   import requests from '../fetchRequests.js';
   export default {
+    name: 'App',
     components: { Message, RoomsList },
     data() {
       return {
@@ -44,7 +45,7 @@
         rooms: [{id: 1, name: 'test'}], //get rid of this sample stuff
         currentRoom: {id: 1, name: 'the best room'}, // this too
         messageText: '',
-      }
+      };
     },
     created() {
       const { currentRoom, messages } = this;
@@ -64,7 +65,7 @@
           room: this.currentRoom.id,
           body: this.messageText,
           user: 1,
-        }
+        };
         requests.sendMessage(message)
           .then(() => {})
           .catch(err => console.log(err));

@@ -19,7 +19,8 @@
 </template>
 
 <script>
-  module.exports = {
+  export default {
+    name: 'Invite',
     props: ['room'],
     data() {
       return {
