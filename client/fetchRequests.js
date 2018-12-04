@@ -20,15 +20,15 @@ export default {
       });
   },
 
-  sendMessage(message) {
+  sendMessage(message, lastMessageTime) {
     return fetch('/messages', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(message),
+      body: JSON.stringify({ message, lastMessageTime }),
     })
       .then(res => {
-        if (res.status !== 201) {
-          throw new Error(res.body);
+        if (res.status === 500) {
+          throw new Error('something went wrong');
         }
         return res.json();
       });

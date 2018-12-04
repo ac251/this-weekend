@@ -117,14 +117,14 @@ app.get('/messages/:room', (req, res) => {
   const { startTime } = req.query;
   if (!startTime) {
     db.getAllMessages(room)
-      .then(messages => {console.log('messagesnostarttime', messages); res.cookie('lastroom', room).status(200).json(messages)})
+      .then(messages => res.cookie('lastroom', room).status(200).json(messages))
       .catch(err => {
         console.log(err);
         res.sendStatus(500);
       });
   } else {
     db.getNewMessages(room, startTime)
-    .then(messages => {console.log('messages', messages); res.cookie('lastroom', room).status(200).json(messages)})
+    .then(messages => res.cookie('lastroom', room).status(200).json(messages))
     .catch(err => {
       console.log(err);
       res.sendStatus(500);
@@ -133,8 +133,10 @@ app.get('/messages/:room', (req, res) => {
 });
 
 app.post('/messages', (req, res) => {
-  db.postMessage(req.body)
-    .then(() => res.sendStatus(201))
+  const { message, lastMessageTime } = req.body
+  db.postMessage(message)
+    .then(() => db.getNewMessages(message.roomid, lastMessageTime))
+    .then((messages) => res.status(201).json(messages))
     .catch(err => console.log(err)); 
 });
 

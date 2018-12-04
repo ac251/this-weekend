@@ -106,14 +106,17 @@
       },
 
       sendMessage() {
+        const lastMessageTime = this.messages.length > 0
+          ? this.messages[this.messages.length - 1].posted
+          : new Date(0).toISOString();
         const message = {
           roomid: this.currentRoom.id,
           body: this.messageText,
           userid: 1,
         };
         this.messageText = '';
-        requests.sendMessage(message)
-          .then(() => {})
+        requests.sendMessage(message, lastMessageTime)
+          .then((messages) => this.updateMessages(messages))
           .catch(err => console.log('ERROR', err));
       },
 
@@ -126,17 +129,21 @@
           : new Date(0).toISOString();
         return requests.getNewMessages(this.currentRoom.id, lastMessageTime)
           .then(newMessages => {
-            let start;
-            if (this.messages.length &&newMessages[0].id === this.messages[this.messages.length - 1].id) {
-              start = 1;
-            } else {
-              start = 0;
-            }
-            for (let i = start; i < newMessages.length; i++) {
-              this.messages.push(newMessages[i]);
-            }
+            this.updateMessages(newMessages);
           })
           .catch(err => console.log('ERROR', err));
+      },
+
+      updateMessages(newMessages) {
+        let start;
+        if (this.messages.length && newMessages[0].id === this.messages[this.messages.length - 1].id) {
+          start = 1;
+        } else {
+          start = 0;
+        }
+        for (let i = start; i < newMessages.length; i++) {
+          this.messages.push(newMessages[i]);
+        }
       },
 
       createRoom(roomName) {
