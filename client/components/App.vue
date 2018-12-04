@@ -175,7 +175,12 @@
         requests.createNewRoom(roomName)
           .then(({ roomid }) => {
             console.log(roomid);
-            this.getRooms(() => this.changeRoom(roomid));
+            this.getRooms(() => {
+              if (this.messages.length === 0) {
+                this.initializeMessages();
+              }
+              this.changeRoom(roomid);
+            });
           })
           .catch(err => console.log('ERROR', err));
       },

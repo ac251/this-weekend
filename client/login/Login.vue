@@ -9,7 +9,7 @@
         v-model="username"
       />
       <button @click.prevent="submit">
-        join the weekend
+        join
       </button>
       <div v-if="error" class="pickusermessage">
         {{message}}        
