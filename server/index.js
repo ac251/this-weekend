@@ -26,7 +26,7 @@ app.get('/rooms', (req, res) => {
 app.get('/messages/:room', (req, res) => {
   const { room } = req.params;
   const { startTime } = req.query;
-  if (startTime) {
+  if (!startTime) {
     db.getAllMessages(room)
     .then(messages => res.status(200).json(messages))
     .catch(err => {
