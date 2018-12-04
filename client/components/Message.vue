@@ -15,7 +15,7 @@
 </template>
 
 <script>
-  import Moment from 'moment';
+  import timeago from 'timeago.js';
   export default {
     name: 'Message',
     props: ['message'],
@@ -26,7 +26,7 @@
     },
     computed: {
       timestamp() {
-        return Moment(this.message.posted).fromNow();
+        return timeago().format(this.message.posted);
       }
     },
     methods: {
@@ -35,5 +35,5 @@
         this.$emit('like', this.message.id);
       },
     },
-  }
+  };
 </script>
