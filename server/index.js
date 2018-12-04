@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const uuid = require('uuid/v1');
+const uuidv1 = require('uuid/v1');
 const cookieParser = require('cookie-parser');
 
 const db = require('../db/index.js');
@@ -10,9 +10,23 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/', (req, res, next) => {next();}); //check session
+app.get('/login', (req, res) => {
+  res.status(200).sendFile(path.join(__dirname, '..', 'public', 'login.html'));
+});
 
-app.use('/', express.static(path.join(__dirname, '..', 'public/')));
+app.use((req, res) => {
+  const { uuid } = req.cookies;
+  if (!uuid) {
+    return res.status(401).redirect('/login');
+  }
+  next();
+});
+
+app.get('/', (req, res) => {
+  res.status(200).sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
+app.use(express.static(path.join(__dirname, '..', 'public/')));
 
 app.get('/messages', (req, res) => {
   // get last room from cookie
@@ -44,7 +58,14 @@ app.get('/messages/:room', (req, res) => {
 })
 ;
 app.post('/users', (req, res) => {
-  // create user
+  const { username } = req.body;
+  const uuid = uuidv1();
+  db.createUser(username, uuid)
+    .then(() => res.cookie('uuid', uuid, {
+      maxAge: 259200000, // 72 hours in ms
+      // todo: set to secure once https is up and running
+    }).sendStatus(201))
+    .catch(() => res.sendStatus(500));
 });
 
 app.post('/messages', (req, res) => {
@@ -59,6 +80,6 @@ app.post('/invites', (req, res) => {
 
 app.post('/rooms', (req, res) => {
   // create room
-})
+});
 
 app.listen(3000, () => console.log('listening on port 3000'));
