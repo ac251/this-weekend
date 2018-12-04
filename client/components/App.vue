@@ -18,25 +18,32 @@
       @done="inviting = false"
     />
     <header v-else>
-      <button @click="choosingRoom = true">
-        change rooms
-      </button>
-      <button @click="inviting = true">
-        invite people to room
-      </button>
+      <div>
+        in room {{currentRoom.name}}
+      </div>
+      <div class="button-row">
+        <button @click="choosingRoom = true">
+          change rooms
+        </button>
+        <button @click="inviting = true">
+          invite people to room
+        </button>
+      </div>
     </header>
     <main>
+      <div class="spacer-top"></div>
       <Message
         v-for="message in messages"
         :key="message.id"
         :message="message"
       />
+      <div class="spacer-bottom"></div>
     </main>
     <footer>
       <form>
         <textarea
-        v-model="messageText"
-        @keyup.enter="sendMessage"
+          v-model="messageText"
+          @keyup.enter="sendMessage"
         >
         </textarea>
         <button @click.prevent="sendMessage">send</button>
@@ -68,6 +75,11 @@
     },
 
     created() {
+      this.interval = setInterval(() => this.getRooms(() => {
+          if (this.rooms.length > 0) {
+            this.changeRoom(this.rooms[0].id);
+          }
+        }), 2000);
       requests.getInitialMessages()
         .then(({messages, rooms, initialRoomIdx}) => {
           this.messages = messages;
@@ -75,21 +87,15 @@
           if (initialRoomIdx !== undefined) {
             this.currentRoom = this.rooms[initialRoomIdx];
             this.currentRoomSelected = true;
+            clearInterval(this.interval);
+            this.interval = setInterval(() => this.getNewMessages(), 2000);
           }
         })
         .catch(err => console.log('ERROR', err));
     },
 
     mounted() {
-      if (this.currentRoomSelected) {
-        this.interval = setInterval(() => this.getNewMessages(), 2000);
-      } else {
-        this.interval = setInterval(() => this.getRooms(() => {
-          if (this.rooms.length > 0) {
-            this.changeRoom(this.rooms[0].id);
-          }
-        }), 2000);
-      }
+        
     },
       
 

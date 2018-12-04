@@ -1,8 +1,8 @@
 <template>
   <header>
-    <h3>
+    <div>
       You're not part of any rooms yet. Create a room.
-    </h3>
+    </div>
     <form>
       <input
         type="text"
