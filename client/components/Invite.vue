@@ -1,9 +1,9 @@
 <template>
   <header>
-    <h1>invite people to {{room}}</h1>
+    <h1>invite people to {{room.name}}</h1>
     <form>
       <input type="text" v-model="input"/>
-      <button @click="submit">
+      <button @click.prevent="submit">
         send invite
       </button>
     </form>
@@ -12,7 +12,7 @@
     >
       {{success ? 'invite sent' : 'we couldn\'t find anyone by that name'}}
     </div>
-    <button @click="$emit(done)">
+    <button @click="$emit('done')">
       done
     </button>
   </header>
@@ -30,16 +30,18 @@
         success: false
       };
     },
-    submit() {
-      requests.inviteUserToRoom(this.input, this.room.id)
-        .then(() => {
-          this.sent = true;
-          this.success = true;
-        })
-        .catch(() => {
-          this.sent = true;
-          this.success = false;
-        });
+    methods: {
+      submit() {
+        requests.inviteUserToRoom(this.input, this.room.id)
+          .then(() => {
+            this.sent = true;
+            this.success = true;
+          })
+          .catch(() => {
+            this.sent = true;
+            this.success = false;
+          });
+        },
     }
   };
   

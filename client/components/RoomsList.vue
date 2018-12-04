@@ -6,14 +6,11 @@
     >
       {{room.name}}
     </button>
-    <button @click="$emit('invite')">
-      invite people
-    </button>
     <button @click="$emit('back')">
       back to {{currentRoom.name}}
     </button>
     <button @click="toggleCreate">
-      {{creating ? 'create new room' : 'cancel' }}
+      {{creating ? 'cancel' : 'create new room' }}
     </button>
     <form v-if="creating">
       <input type="text" v-model="input">

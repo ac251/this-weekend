@@ -64,23 +64,26 @@ app.get('/messages', (req, res) => {
   db.getRooms(uuid)
     .then(rooms => {
       let initialRoomIdx;
-      if (!lastroom && this.rooms.length !== 0) {
-        initialRoomIdx = 0;
-      }
-      if (!lastroom || rooms.length === 0) {
+
+      if (rooms.length === 0) {
         return res.status(200).json({
           messages: [],
           rooms,
           initialRoomIdx,
         });
       }
+
+      if (lastroom === undefined && rooms.length !== 0) {
+        initialRoomIdx = 0;
+      }
+
       rooms.forEach((room, idx) => {
-        console.log('typeof', typeof lastroom);
+        console.log('roomidtype', typeof room.id);
         if (room.id === parseInt(lastroom)) {
+          console.log('FOUND IT');
           initialRoomIdx = idx;
         }
       });
-      console.log('ROOMS', rooms);
       console.log('initialRoomIdx', initialRoomIdx);
       return db.getAllMessages(lastroom || rooms[0].id)
         .then(messages => {
@@ -89,6 +92,7 @@ app.get('/messages', (req, res) => {
             rooms,
             initialRoomIdx,
           };
+          console.log('BODY', body)
           res.status(200).json(body);
         });
     })
@@ -110,9 +114,7 @@ app.get('/rooms', (req, res) => {
 
 app.get('/messages/:room', (req, res) => {
   const { room } = req.params;
-  console.log('ROOM', room);
   const { startTime } = req.query;
-  console.log('TIIIMESTAMP', startTime)
   if (!startTime) {
     db.getAllMessages(room)
       .then(messages => {console.log('messagesnostarttime', messages); res.cookie('lastroom', room).status(200).json(messages)})
