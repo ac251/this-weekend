@@ -8,7 +8,7 @@
         type="text"
         v-model="username"
       />
-      <button @click="submit">
+      <button @click.prevent="submit">
         join the weekend
       </button>
       <div v-if="error">
@@ -17,6 +17,7 @@
     </form>
   </div>
 </template>
+
 <script>
   import requests from '../fetchRequests.js';
   export default {
@@ -31,11 +32,11 @@
     methods: {
       submit() {
         requests.createNewUser(this.username)
-        .then(window.location.replace('/'))
-        .catch(err => {
-          this.error = true;
-          this.message = err.message;
-        });
+          .then(() =>  window.location.replace('/'))
+          .catch(err => {
+            this.error = true;
+            this.message = err.message;
+          });
       }
 
     }

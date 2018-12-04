@@ -1,4 +1,5 @@
 import queryString from 'query-string';
+import axios from 'axios';
 
 export default {
   createUser(name) {
@@ -44,12 +45,11 @@ export default {
 
   getNewMessages(room, startTime) {
     return fetch(`/messages/${room}?${queryString.stringify({ startTime })}`);
-
   },
 
-  createNewUser() {
-    const { username } = this;
-    fetch('/users', {
+  createNewUser(username) {
+    console.log('fetching');
+    return fetch('/users', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ username }),
@@ -58,11 +58,11 @@ export default {
         if (res.status === 409) {
           throw new Error('sorry, that username isn\'t available');
         }
-        if (res.status === 201) {
+        if (res.status === 500) {
           throw new Error('sorry, something went wrong');
         }
         return;
       });
-  }
+  },
 
 };
