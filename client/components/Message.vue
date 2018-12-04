@@ -19,21 +19,10 @@
   export default {
     name: 'Message',
     props: ['message'],
-    data() {
-      return {
-        liked: false,
-      };
-    },
     computed: {
       timestamp() {
         return timeago().format(this.message.posted);
       }
-    },
-    methods: {
-      like() {
-        this.liked = true;
-        this.$emit('like', this.message.id);
-      },
     },
   };
 </script>
