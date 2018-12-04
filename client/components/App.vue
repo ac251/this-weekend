@@ -18,7 +18,7 @@
       @done="inviting = false"
     />
     <header v-else>
-      <div>
+      <div class="top-text">
         in room {{currentRoom.name}}
       </div>
       <div class="button-row">
@@ -36,11 +36,12 @@
         v-for="message in messages"
         :key="message.id"
         :message="message"
+        :user="user"
       />
       <div class="spacer-bottom"></div>
     </main>
-    <footer>
-      <form>
+    <footer v-if="currentRoomSelected">
+      <form class="message-compose">
         <textarea
           v-model="messageText"
           @keyup.enter="sendMessage"
@@ -64,7 +65,7 @@
     data() {
       return {
         messages: [],
-        user: '',
+        user: {},
         choosingRoom: false,
         inviting: false,
         rooms: [], //get rid of this sample stuff
@@ -78,20 +79,10 @@
       this.interval = setInterval(() => this.getRooms(() => {
           if (this.rooms.length > 0) {
             this.changeRoom(this.rooms[0].id);
+            this.initializeMessages();
           }
         }), 2000);
-      requests.getInitialMessages()
-        .then(({messages, rooms, initialRoomIdx}) => {
-          this.messages = messages;
-          this.rooms = rooms;
-          if (initialRoomIdx !== undefined) {
-            this.currentRoom = this.rooms[initialRoomIdx];
-            this.currentRoomSelected = true;
-            clearInterval(this.interval);
-            this.interval = setInterval(() => this.getNewMessages(), 2000);
-          }
-        })
-        .catch(err => console.log('ERROR', err));
+      this.initializeMessages();
     },
 
     mounted() {
@@ -117,6 +108,22 @@
           .catch(err => console.log('ERROR', err));    
       },
 
+      initializeMessages() {
+        requests.getInitialMessages()
+        .then(({messages, rooms, initialRoomIdx, user}) => {
+          this.messages = messages;
+          this.rooms = rooms;
+          this.user = user;
+          if (initialRoomIdx !== undefined) {
+            this.currentRoom = this.rooms[initialRoomIdx];
+            this.currentRoomSelected = true;
+            clearInterval(this.interval);
+            this.interval = setInterval(() => this.getNewMessages(), 2000);
+          }
+        })
+        .catch(err => console.log('ERROR', err));
+      },
+
       sendMessage() {
         const lastMessageTime = this.messages.length > 0
           ? this.messages[this.messages.length - 1].posted
@@ -124,7 +131,7 @@
         const message = {
           roomid: this.currentRoom.id,
           body: this.messageText,
-          userid: 1,
+          userid: this.user.id,
         };
         this.messageText = '';
         requests.sendMessage(message, lastMessageTime)
@@ -159,7 +166,9 @@
       },
 
       createRoom(roomName) {
-        console.log('your new room is', roomName);
+        if (roomName.length === 0) {
+          return;
+        }
         requests.createNewRoom(roomName)
           .then(({ roomid }) => {
             console.log(roomid);

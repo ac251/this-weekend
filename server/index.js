@@ -61,7 +61,12 @@ app.get('/', (req, res) => {
 
 app.get('/messages', (req, res) => {
   const { uuid, lastroom } = req.cookies;
-  db.getRooms(uuid)
+  let user = {};
+  db.findUserByUuid(uuid)
+    .then(rows => {
+      user = rows[0];
+      return db.getRooms(uuid);
+    })
     .then(rooms => {
       let initialRoomIdx;
 
@@ -88,11 +93,12 @@ app.get('/messages', (req, res) => {
       return db.getAllMessages(lastroom || rooms[0].id)
         .then(messages => {
           const body = {
+            user,
             messages,
             rooms,
             initialRoomIdx,
           };
-          console.log('BODY', body)
+          console.log('BODY', body);
           res.status(200).json(body);
         });
     })

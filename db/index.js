@@ -73,6 +73,13 @@ module.exports.findUser = (userName) => {
     .then(({ rows }) => rows);
 };
 
+module.exports.findUserByUuid = (uuid) => {
+  const queryStr = 'SELECT * FROM users WHERE uuid = $1';
+
+  return pool.query(queryStr, [uuid])
+    .then(({ rows }) => rows);
+};
+
 module.exports.postMessage = (message) => {
   const { userid, roomid, body } = message;
   const queryStr = 'INSERT INTO messages (userid, roomid, body) VALUES ($1, $2, $3)';

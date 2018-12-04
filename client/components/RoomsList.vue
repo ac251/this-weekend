@@ -14,7 +14,7 @@
     </button>
     <form v-if="creating">
       <input type="text" v-model="input">
-      <button @click="$emit('create-room', input)">
+      <button @click.prevent="$emit('create-room', input)">
         create room
       </button>
     </form>

@@ -1,0 +1,111 @@
+header {
+  position: fixed;
+  top: 0;
+  opacity: 1;
+  background-color: red;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: flex-start;
+}
+
+header, main, footer {
+  width: 100%;
+  max-width: 900px;
+  padding-left: 20px;
+  margin: 0 10px 0 10px;
+}
+
+main {
+  overflow-y: scroll;
+}
+
+body {
+  background-color: darkgray;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  height: 150px;
+  background-color: dimgray;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+button {
+  display: block;
+  background-color: #262829;
+  color: dimgray;
+  margin: 5px;
+  border: none;
+  border-radius: 1px;
+  font-size: large;
+}
+
+textarea {
+  resize: none;
+  display: block;
+  width: 80%;
+}
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.spacer-top {
+  height: 100px;
+}
+
+.spacer-bottom {
+  height: 150px;
+}
+
+.top-text {
+  margin: 5px;
+  font-size: medium;
+}
+
+.message-compose{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.message-compose button {
+  margin: 20px;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  width: 400px;
+  border: 1px solid #ED5C5C;
+  margin: 5px 0;
+}
+
+.message-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin: auto;
+}
+
+.user {
+  background-color: #ED5C5C;
+  margin-left: 10px;
+}
+.message.same-user {
+  border-color: #D6D1AE;
+}
+
+.message.same-user .user {
+  background-color: #D6D1AE;
+}
+
+.message div {
+  padding: 15px;
+}
