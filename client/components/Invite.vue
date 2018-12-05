@@ -1,6 +1,6 @@
 <template>
   <header>
-    <div class="top-text">invite people to {{room.name}}</div>
+    <div class="top-text">invite people to <span class="current-room-name">{{room.name}}</span></div>
     <form>
       <input type="text" v-model="input"/>
       <button @click.prevent="submit">

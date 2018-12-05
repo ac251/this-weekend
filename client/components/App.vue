@@ -19,7 +19,7 @@
     />
     <header v-else>
       <div class="top-text">
-        in room {{currentRoom.name}}
+        in room: <span class="current-room-name">{{currentRoom.name}}</span>
       </div>
       <div class="button-row">
         <button 
@@ -81,14 +81,9 @@
       this.interval = setInterval(() => this.getRooms(() => {
           if (this.rooms.length > 0) {
             this.changeRoom(this.rooms[0].id);
-            this.initializeMessages();
           }
         }), 2000);
       this.initializeMessages();
-    },
-
-    mounted() {
-        
     },
       
 
@@ -112,19 +107,19 @@
 
       initializeMessages() {
         requests.getInitialMessages()
-        .then(({messages, rooms, initialRoomIdx, user}) => {
-          this.messages = messages;
-          this.rooms = rooms;
-          this.user = user;
-          if (initialRoomIdx !== undefined) {
-            this.currentRoom = this.rooms[initialRoomIdx];
-            this.currentRoomSelected = true;
-            clearInterval(this.interval);
-            this.interval = setInterval(() => this.getNewMessages(), 2000);
-            setInterval(() => this.getRooms(), 5000);
-          }
-        })
-        .catch(err => console.log('ERROR', err));
+          .then(({messages, rooms, initialRoomIdx, user}) => {
+            this.messages = messages;
+            this.rooms = rooms;
+            this.user = user;
+            if (initialRoomIdx !== undefined) {
+              this.currentRoom = this.rooms[initialRoomIdx];
+              this.currentRoomSelected = true;
+              clearInterval(this.interval);
+              this.interval = setInterval(() => this.getNewMessages(), 2000);
+              setInterval(() => this.getRooms(), 5000);
+            }
+          })
+          .catch(err => console.log('ERROR', err));
       },
 
       sendMessage() {

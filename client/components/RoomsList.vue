@@ -7,7 +7,7 @@
       {{room.name}}
     </button>
     <button @click="$emit('back')">
-      back to {{currentRoom.name}}
+      back to <span class="current-room-name">{{currentRoom.name}}</span>
     </button>
     <button @click="toggleCreate">
       {{creating ? 'cancel' : 'create new room' }}

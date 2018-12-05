@@ -128,3 +128,7 @@ textarea {
 .timestamp {
   font-style: italic;
 }
+
+.current-room-name {
+  font-style: italic;
+}
