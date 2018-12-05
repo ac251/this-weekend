@@ -35,7 +35,7 @@
       submit() {
         this.lastInput = this.input;
         this.input = '';
-        requests.inviteUserToRoom(this.input, this.room.id)
+        requests.inviteUserToRoom(this.lastInput, this.room.id)
           .then(() => {
             this.sent = true;
             this.success = true;
