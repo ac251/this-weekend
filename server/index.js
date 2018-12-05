@@ -55,6 +55,18 @@ app.post('/users', (req, res) => {
     });
 });
 
+app.get('/users', (req, res) => {
+  const { uuid } = req.cookies;
+  db.findUserByUuid(uuid)
+    .then(rows => {
+      if (rows.length === 0) {
+        res.sendStatus(404);
+      }
+      res.status(200).json(rows[0]);
+    })
+    .catch(err => res.status(500).send(err));
+});
+
 app.get('/', (req, res) => {
   res.status(200).sendFile(path.join(__dirname, '..', 'html', 'index.html'));
 });
@@ -75,6 +87,7 @@ app.get('/messages', (req, res) => {
           messages: [],
           rooms,
           initialRoomIdx,
+          user,
         });
       }
 

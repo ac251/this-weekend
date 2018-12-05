@@ -20,6 +20,11 @@ export default {
       });
   },
 
+  getUserDetails() {
+    return fetch('/users')
+      .then(data => data.json());
+  },
+
   sendMessage(message, lastMessageTime) {
     return fetch('/messages', {
       method: 'POST',

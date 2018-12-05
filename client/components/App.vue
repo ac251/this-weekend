@@ -35,7 +35,7 @@
     <main>
       <div class="spacer-top"></div>
       <Message
-        v-for="message in messages"
+        v-for="message in displayMessages"
         :key="message.id"
         :message="message"
         :user="user"
@@ -77,13 +77,19 @@
       };
     },
 
+    computed: {
+      displayMessages() {
+        return this.user.id === undefined ? [] : this.messages;
+      }
+    },
+
     created() {
+      this.initializeUser();
       this.interval = setInterval(() => this.getRooms(() => {
           if (this.rooms.length > 0) {
             this.changeRoom(this.rooms[0].id);
           }
         }), 2000);
-      this.initializeMessages();
     },
       
 
@@ -120,6 +126,16 @@
             }
           })
           .catch(err => console.log('ERROR', err));
+      },
+
+      initializeUser() {
+        requests.getUserDetails()
+          .then(data => {
+            console.log('DATA', data);
+            this.user = data;
+            this.initializeMessages();
+          })
+          .catch(err => console.log(err));
       },
 
       sendMessage() {
