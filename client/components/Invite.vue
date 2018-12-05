@@ -10,7 +10,7 @@
     <div v-if="sent"
       :class="success ? 'invite-success' : 'invite-failure'"
     >
-      {{success ? 'invite sent' : 'we couldn\'t find anyone by that name'}}
+      {{success ? `invite sent to ${lastInput}` : `we couldn\'t find anyone by the name of ${lastInput}`}}
     </div>
     <button @click="$emit('done')">
       done
@@ -27,11 +27,14 @@
       return {
         input: '',
         sent: false,
-        success: false
+        success: false,
+        lastInput: '',
       };
     },
     methods: {
       submit() {
+        this.lastInput = this.input;
+        this.input = '';
         requests.inviteUserToRoom(this.input, this.room.id)
           .then(() => {
             this.sent = true;
