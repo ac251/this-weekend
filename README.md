@@ -1,10 +1,8 @@
 # this-weekend
-ephemeral messaging and group chat app. Who do you want to be this weekend?
+ephemeral messaging and group chat app.
 
-The weekend doesn't last forever, so why should your message history?
+Not only do the messages expire, the handles do, too.
 
-This app lets you choose who you want to be each weekend. Your handle expires after 3 days.
+Pick a username, no password needed, and then for 72 hours you'll have access from that browser. Create rooms and invite people to join you.
 
-Then, you can create rooms, or join rooms others have invited you to. Chat all you want for three days.
-
-After that, it's all in your memory. Talk about it all you want, but there's no paper trail.
+After 72 hours? It's all gone.
