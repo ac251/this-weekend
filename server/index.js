@@ -152,7 +152,7 @@ app.get('/messages/:room', (req, res) => {
 });
 
 app.post('/messages', (req, res) => {
-  const { message, lastMessageTime } = req.body
+  const { message, lastMessageTime } = req.body;
   db.postMessage(message)
     .then(() => db.getNewMessages(message.roomid, lastMessageTime))
     .then((messages) => res.status(201).json(messages))
